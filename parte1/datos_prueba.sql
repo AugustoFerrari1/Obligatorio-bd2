@@ -70,11 +70,13 @@ INSERT INTO contenido VALUES (15, TO_DATE('2026-05-31','YYYY-MM-DD'), '09:20:00'
 
 
 -- 9. PUBLICACIONES
-INSERT INTO Publicacion VALUES (1, 'Avances en LLMs 2025',          'Los modelos de lenguaje superan benchmarks clave.',     'Activa',    TO_DATE('2026-05-20','YYYY-MM-DD'), '09:00:00', 0, 1);
-INSERT INTO Publicacion VALUES (2, 'Redes neuronales y creatividad', 'Analisis de modelos generativos aplicados al arte.',    'Activa',    TO_DATE('2026-05-22','YYYY-MM-DD'), '11:30:00', 0, 1);
-INSERT INTO Publicacion VALUES (3, 'Debate: IA reemplaza empleos',   'Argumentos a favor y en contra del reemplazo laboral.', 'Cerrada',   TO_DATE('2026-05-25','YYYY-MM-DD'), '14:00:00', 0, 1);
-INSERT INTO Publicacion VALUES (4, 'Open Science y agentes de IA',   'Como los agentes pueden democratizar la investigacion.','Activa',    TO_DATE('2026-05-28','YYYY-MM-DD'), '16:15:00', 0, 2);
-INSERT INTO Publicacion VALUES (5, 'Contenido eliminado',            'Este contenido fue eliminado por violacion de normas.', 'Eliminada', TO_DATE('2026-05-30','YYYY-MM-DD'), '08:45:00', 0, 2);
+-- (idContenido, titulo, cuerpo, estado, votosTotales, idComunidad)
+-- fechaCreacion y horaCreacion se toman de la tabla contenido
+INSERT INTO Publicacion VALUES (1, 'Avances en LLMs 2025',          'Los modelos de lenguaje superan benchmarks clave.',     'Activa',    0, 1);
+INSERT INTO Publicacion VALUES (2, 'Redes neuronales y creatividad', 'Analisis de modelos generativos aplicados al arte.',    'Activa',    0, 1);
+INSERT INTO Publicacion VALUES (3, 'Debate: IA reemplaza empleos',   'Argumentos a favor y en contra del reemplazo laboral.', 'Cerrada',   0, 1);
+INSERT INTO Publicacion VALUES (4, 'Open Science y agentes de IA',   'Como los agentes pueden democratizar la investigacion.','Activa',    0, 2);
+INSERT INTO Publicacion VALUES (5, 'Contenido eliminado',            'Este contenido fue eliminado por violacion de normas.', 'Eliminada', 0, 2);
 
 
 -- 10. CITA
@@ -82,11 +84,13 @@ INSERT INTO cita VALUES (2, 1, TO_DATE('2026-05-22','YYYY-MM-DD'));
 
 
 -- 11. COMENTARIOS 
-INSERT INTO comentario VALUES (11, 'Totalmente de acuerdo, los LLMs estan avanzando rapidamente.',            TO_DATE('2026-05-21','YYYY-MM-DD'), '10:00:00', 1, NULL);
-INSERT INTO comentario VALUES (12, 'Comparto, aunque falta mejorar razonamiento causal.',                     TO_DATE('2026-05-21','YYYY-MM-DD'), '10:30:00', 1, 11);
-INSERT INTO comentario VALUES (13, 'Los agentes ya estan siendo usados en revision de papers.',               TO_DATE('2026-05-23','YYYY-MM-DD'), '12:00:00', 4, NULL);
-INSERT INTO comentario VALUES (14, 'La creatividad de las redes neuronales sigue siendo limitada.',           TO_DATE('2026-05-29','YYYY-MM-DD'), '17:00:00', 2, NULL);
-INSERT INTO comentario VALUES (15, 'En musica ya superan a humanos en ciertos aspectos.',                     TO_DATE('2026-05-31','YYYY-MM-DD'), '09:20:00', 2, 14);
+-- (idContenido, cuerpo, idPublicacion, idComentarioPadre)
+-- fechaCreacion y horaCreacion se toman de la tabla contenido
+INSERT INTO comentario VALUES (11, 'Totalmente de acuerdo, los LLMs estan avanzando rapidamente.',            1, NULL);
+INSERT INTO comentario VALUES (12, 'Comparto, aunque falta mejorar razonamiento causal.',                     1, 11);
+INSERT INTO comentario VALUES (13, 'Los agentes ya estan siendo usados en revision de papers.',               4, NULL);
+INSERT INTO comentario VALUES (14, 'La creatividad de las redes neuronales sigue siendo limitada.',           2, NULL);
+INSERT INTO comentario VALUES (15, 'En musica ya superan a humanos en ciertos aspectos.',                     2, 14);
 
 
 -- 12. VOTOS

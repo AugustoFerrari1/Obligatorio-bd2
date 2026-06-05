@@ -57,19 +57,21 @@ CREATE TABLE historial (
 );
 
 
--- transferencia: auditoria de cambios de administrador de un Agente.
--- emailAdmin en Agente se actualiza via TRG-08 tras cada insercion.
+-- transferencia: auditoria de cambio de administrador de un Agente especifico.
+-- El cedente (admin actual) cede la administracion al receptor.
+-- TRG-07 valida que emailCedente sea el admin actual del agente.
+-- TRG-08 actualiza emailAdmin en Agente tras cada insercion.
 CREATE TABLE transferencia (
     idAgente        INT             NOT NULL,
-    emailOrigen     VARCHAR2(100)   NOT NULL,
-    emailDestino    VARCHAR2(100)   NOT NULL,
+    emailCedente    VARCHAR2(100)   NOT NULL,
+    emailReceptor   VARCHAR2(100)   NOT NULL,
     fecha           DATE            NOT NULL,
-    CONSTRAINT pk_transferencia  PRIMARY KEY (idAgente, emailOrigen, emailDestino, fecha),
-    CONSTRAINT fk_trans_agente   FOREIGN KEY (idAgente)
+    CONSTRAINT pk_transferencia    PRIMARY KEY (idAgente, emailCedente, emailReceptor, fecha),
+    CONSTRAINT fk_trans_agente     FOREIGN KEY (idAgente)
         REFERENCES Agente(idAgente),
-    CONSTRAINT fk_trans_origen   FOREIGN KEY (emailOrigen)
+    CONSTRAINT fk_trans_cedente    FOREIGN KEY (emailCedente)
         REFERENCES usuarioHumano(email),
-    CONSTRAINT fk_trans_destino  FOREIGN KEY (emailDestino)
+    CONSTRAINT fk_trans_receptor   FOREIGN KEY (emailReceptor)
         REFERENCES usuarioHumano(email)
 );
 
@@ -114,22 +116,21 @@ CREATE TABLE contenido (
         REFERENCES Agente(idAgente)
 );
 
--- Publicacion: subclase de contenido. idPublicacion = FK a contenido (ISA).
+-- Publicacion: subclase de contenido. idContenido = PK heredada de contenido (ISA).
+-- fechaCreacion y horaCreacion se heredan de contenido, no se repiten aqui.
 -- estado: borrado logico ('Eliminada' oculta pero no borra fisicamente).
 -- votosTotales: derivado, mantenido atomicamente por TRG-05.
 -- idComunidad: relacion publicadoEn, siempre obligatoria.
 CREATE TABLE Publicacion (
-    idPublicacion   INT             NOT NULL,
+    idContenido     INT             NOT NULL,
     titulo          VARCHAR2(255)   NOT NULL,
     cuerpo          CLOB            NOT NULL,
     estado          VARCHAR2(10)    DEFAULT 'Activa' NOT NULL,
-    fechaCreacion   DATE            NOT NULL,
-    horaCreacion    VARCHAR2(8)     NOT NULL,
     votosTotales    INT             DEFAULT 0 NOT NULL,
     idComunidad     INT             NOT NULL,
-    CONSTRAINT pk_publicacion    PRIMARY KEY (idPublicacion),
+    CONSTRAINT pk_publicacion    PRIMARY KEY (idContenido),
     CONSTRAINT ck_pub_estado     CHECK (estado IN ('Activa', 'Cerrada', 'Eliminada')),
-    CONSTRAINT fk_pub_contenido  FOREIGN KEY (idPublicacion)
+    CONSTRAINT fk_pub_contenido  FOREIGN KEY (idContenido)
         REFERENCES contenido(idContenido) ON DELETE CASCADE,
     CONSTRAINT fk_pub_comunidad  FOREIGN KEY (idComunidad)
         REFERENCES comunidad(idComunidad)
@@ -142,29 +143,28 @@ CREATE TABLE cita (
     fechaCita           DATE  NOT NULL,
     CONSTRAINT pk_cita        PRIMARY KEY (idPublicacionOrigen, idPublicacionCitada),
     CONSTRAINT fk_cita_origen FOREIGN KEY (idPublicacionOrigen)
-        REFERENCES Publicacion(idPublicacion),
+        REFERENCES Publicacion(idContenido),
     CONSTRAINT fk_cita_citada FOREIGN KEY (idPublicacionCitada)
-        REFERENCES Publicacion(idPublicacion)
+        REFERENCES Publicacion(idContenido)
 );
 
--- comentario: subclase de contenido. idComentario = FK a contenido (ISA).
+-- comentario: subclase de contenido. idContenido = PK heredada de contenido (ISA).
+-- fechaCreacion y horaCreacion se heredan de contenido, no se repiten aqui.
 -- idPublicacion: publicacion raiz del hilo (relacion comenta).
 -- idComentarioPadre: autorreferencial para hilos anidados (RespondeA).
 --   NULL = responde directamente a la publicacion.
 CREATE TABLE comentario (
-    idComentario        INT         NOT NULL,
+    idContenido         INT         NOT NULL,
     cuerpo              CLOB        NOT NULL,
-    fechaComentario     DATE        NOT NULL,
-    horaComentario      VARCHAR2(8) NOT NULL,
     idPublicacion       INT         NOT NULL,
     idComentarioPadre   INT,
-    CONSTRAINT pk_comentario       PRIMARY KEY (idComentario),
-    CONSTRAINT fk_com_contenido    FOREIGN KEY (idComentario)
+    CONSTRAINT pk_comentario       PRIMARY KEY (idContenido),
+    CONSTRAINT fk_com_contenido    FOREIGN KEY (idContenido)
         REFERENCES contenido(idContenido) ON DELETE CASCADE,
     CONSTRAINT fk_com_publicacion  FOREIGN KEY (idPublicacion)
-        REFERENCES Publicacion(idPublicacion),
+        REFERENCES Publicacion(idContenido),
     CONSTRAINT fk_com_responde     FOREIGN KEY (idComentarioPadre)
-        REFERENCES comentario(idComentario)
+        REFERENCES comentario(idContenido)
 );
 
 -- vota: Agente Observador vota una Publicacion. PK garantiza un voto por agente.
@@ -180,7 +180,7 @@ CREATE TABLE vota (
     CONSTRAINT fk_vota_agente    FOREIGN KEY (idAgente)
         REFERENCES Agente(idAgente),
     CONSTRAINT fk_vota_pub       FOREIGN KEY (idPublicacion)
-        REFERENCES Publicacion(idPublicacion)
+        REFERENCES Publicacion(idContenido)
 );
 
 -- modera: relacion ternaria Agente-contenido-comunidad.

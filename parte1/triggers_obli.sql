@@ -37,11 +37,11 @@ DECLARE
     v_es_miembro NUMBER;
 BEGIN
     -- Obtener el agente autor desde la superclase contenido
-    -- (idPublicacion == idContenido por la FK ISA)
+    -- (idContenido de Publicacion == idContenido de contenido por la FK ISA)
     SELECT idAgente
     INTO v_id_agente
     FROM contenido
-    WHERE idContenido = :NEW.idPublicacion;
+    WHERE idContenido = :NEW.idContenido;
 
     -- Regla: comunidad archivada no acepta publicaciones
     SELECT archivado
@@ -84,13 +84,13 @@ BEGIN
     SELECT idAgente
     INTO v_id_agente
     FROM contenido
-    WHERE idContenido = :NEW.idComentario;
+    WHERE idContenido = :NEW.idContenido;
 
     -- Obtener comunidad y estado de la publicacion raiz
     SELECT idComunidad, estado
     INTO v_id_comunidad, v_estado_pub
     FROM Publicacion
-    WHERE idPublicacion = :NEW.idPublicacion;
+    WHERE idContenido = :NEW.idPublicacion;
 
     -- Regla: publicacion cerrada no admite comentarios
     IF v_estado_pub = 'Cerrada' THEN
@@ -143,7 +143,7 @@ BEGIN
     SELECT estado
     INTO v_estado_pub
     FROM Publicacion
-    WHERE idPublicacion = :NEW.idPublicacion;
+    WHERE idContenido = :NEW.idPublicacion;
 
     IF v_estado_pub = 'Eliminada' THEN
         RAISE_APPLICATION_ERROR(-20009,
@@ -160,7 +160,7 @@ FOR EACH ROW
 BEGIN
     UPDATE Publicacion
        SET votosTotales = votosTotales + :NEW.valor
-     WHERE idPublicacion = :NEW.idPublicacion;
+     WHERE idContenido = :NEW.idPublicacion;
 END;
 /
 
@@ -206,7 +206,8 @@ BEGIN
 END;
 /
 
--- TRG-07: transferencia 
+-- TRG-07
+-- Valida que el cedente sea el administrador actual del agente especifico.
 CREATE OR REPLACE TRIGGER trg_transferencia_before_insert
 BEFORE INSERT ON transferencia
 FOR EACH ROW
@@ -218,22 +219,23 @@ BEGIN
     FROM Agente
     WHERE idAgente = :NEW.idAgente;
 
-    IF v_admin_actual != :NEW.emailOrigen THEN
+    IF v_admin_actual != :NEW.emailCedente THEN
         RAISE_APPLICATION_ERROR(-20013,
-            'El usuario origen no es el administrador actual del agente.');
+            'El usuario cedente no es el administrador actual del agente.');
     END IF;
 END;
 /
 
 
 
--- TRG-08: transferencia 
+-- TRG-08
+-- Actualiza emailAdmin en el Agente especifico.
 CREATE OR REPLACE TRIGGER trg_transferencia_after_insert
 AFTER INSERT ON transferencia
 FOR EACH ROW
 BEGIN
     UPDATE Agente
-    SET emailAdmin = :NEW.emailDestino
-    WHERE idAgente   = :NEW.idAgente;
+    SET    emailAdmin = :NEW.emailReceptor
+    WHERE  idAgente   = :NEW.idAgente;
 END;
 /

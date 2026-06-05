@@ -37,50 +37,47 @@ END sp_registrar_agente;
 
 -- REQ 2.2 - Transferencia de administracion
 --
--- Transfiere la administracion de un agente a otro usuario.
--- Los triggers TRG-07 y TRG-08 se encargan de validar
--- que el emailOrigen sea el admin actual y de actualizar
--- emailAdmin en Agente automaticamente.
+-- Transfiere la administracion de un agente especifico a otro usuario.
+-- TRG-07 valida que el emailCedente sea el admin actual del agente.
+-- TRG-08 actualiza emailAdmin en Agente automaticamente.
 -- Parametros de entrada:
 --   p_idAgente      : id del agente a transferir
---   p_emailOrigen   : email del admin actual (quien cede)
---   p_emailDestino  : email del nuevo admin (quien recibe)
+--   p_emailCedente  : email del admin actual (quien cede)
+--   p_emailReceptor : email del nuevo admin (quien recibe)
 --   p_fecha         : fecha de la transferencia
 
 CREATE OR REPLACE PROCEDURE sp_transferir_agente (
     p_idAgente      IN INT,
-    p_emailOrigen   IN VARCHAR2,
-    p_emailDestino  IN VARCHAR2,
+    p_emailCedente  IN VARCHAR2,
+    p_emailReceptor IN VARCHAR2,
     p_fecha         IN DATE
 ) AS
     v_adminActual   VARCHAR2(100);
-    v_existeOrigen  INT;
-    v_existeDestino INT;
 BEGIN
-    -- Verificar que el agente exista
+    -- Verificar que el agente exista y obtener su admin actual
     SELECT emailAdmin
     INTO v_adminActual
     FROM Agente
     WHERE idAgente = p_idAgente;
 
-    -- Verificar que emailOrigen sea el admin actual
-    IF v_adminActual != p_emailOrigen THEN
-        DBMS_OUTPUT.PUT_LINE('Error: el emailOrigen no es el administrador actual del agente.');
+    -- Verificar que emailCedente sea el admin actual
+    IF v_adminActual != p_emailCedente THEN
+        DBMS_OUTPUT.PUT_LINE('Error: el emailCedente no es el administrador actual del agente.');
         RETURN;
     END IF;
 
-    -- Verificar que origen y destino no sean el mismo
-    IF p_emailOrigen = p_emailDestino THEN
-        DBMS_OUTPUT.PUT_LINE('Error: el origen y el destino no pueden ser el mismo usuario.');
+    -- Verificar que cedente y receptor no sean el mismo
+    IF p_emailCedente = p_emailReceptor THEN
+        DBMS_OUTPUT.PUT_LINE('Error: el cedente y el receptor no pueden ser el mismo usuario.');
         RETURN;
     END IF;
 
     -- Insertar la transferencia
-    -- TRG-07 valida emailOrigen y TRG-08 actualiza emailAdmin en Agente
-    INSERT INTO transferencia (idAgente, emailOrigen, emailDestino, fecha)
-    VALUES (p_idAgente, p_emailOrigen, p_emailDestino, p_fecha);
+    -- TRG-07 revalida; TRG-08 actualiza emailAdmin en Agente
+    INSERT INTO transferencia (idAgente, emailCedente, emailReceptor, fecha)
+    VALUES (p_idAgente, p_emailCedente, p_emailReceptor, p_fecha);
 
-    DBMS_OUTPUT.PUT_LINE('Transferencia registrada. Nuevo admin: ' || p_emailDestino);
+    DBMS_OUTPUT.PUT_LINE('Transferencia registrada. Nuevo admin del agente ' || p_idAgente || ': ' || p_emailReceptor);
 END sp_transferir_agente;
 /
 
@@ -116,8 +113,8 @@ BEGIN
     VALUES (p_idContenido, p_fecha, p_hora, p_idAgente);
 
     -- TRG-02 valida comunidad no archivada y que sea Miembro Activo
-    INSERT INTO Publicacion (idPublicacion, titulo, cuerpo, estado, fechaCreacion, horaCreacion, votosTotales, idComunidad)
-    VALUES (p_idContenido, p_titulo, p_cuerpo, 'Activa', p_fecha, p_hora, 0, p_idComunidad);
+    INSERT INTO Publicacion (idContenido, titulo, cuerpo, estado, votosTotales, idComunidad)
+    VALUES (p_idContenido, p_titulo, p_cuerpo, 'Activa', 0, p_idComunidad);
 
     DBMS_OUTPUT.PUT_LINE('Publicacion creada correctamente con id: ' || p_idContenido);
 END sp_generar_publicacion;
@@ -196,8 +193,8 @@ BEGIN
     VALUES (p_idContenido, p_fecha, p_hora, p_idAgente);
 
     -- TRG-03 valida publicacion no cerrada y pertenencia a comunidad
-    INSERT INTO comentario (idComentario, cuerpo, fechaComentario, horaComentario, idPublicacion, idComentarioPadre)
-    VALUES (p_idContenido, p_cuerpo, p_fecha, p_hora, p_idPublicacion, p_idComentarioPadre);
+    INSERT INTO comentario (idContenido, cuerpo, idPublicacion, idComentarioPadre)
+    VALUES (p_idContenido, p_cuerpo, p_idPublicacion, p_idComentarioPadre);
 
     DBMS_OUTPUT.PUT_LINE('Comentario registrado correctamente con id: ' || p_idContenido);
 END sp_generar_comentario;
@@ -243,18 +240,18 @@ BEGIN
         -- Verificar si el contenido es una publicacion
         SELECT COUNT(*) INTO v_esPublicacion
         FROM Publicacion
-        WHERE idPublicacion = p_idContenido;
+        WHERE idContenido = p_idContenido;
 
         IF v_esPublicacion > 0 THEN
             IF p_accion = 'cerrar' THEN
                 UPDATE Publicacion
                 SET estado = 'Cerrada'
-                WHERE idPublicacion = p_idContenido;
+                WHERE idContenido = p_idContenido;
                 DBMS_OUTPUT.PUT_LINE('Publicacion ' || p_idContenido || ' cerrada.');
             ELSIF p_accion = 'eliminar' THEN
                 UPDATE Publicacion
                 SET estado = 'Eliminada'
-                WHERE idPublicacion = p_idContenido;
+                WHERE idContenido = p_idContenido;
                 DBMS_OUTPUT.PUT_LINE('Publicacion ' || p_idContenido || ' marcada como eliminada.');
             END IF;
         END IF;
@@ -334,7 +331,7 @@ BEGIN
                a.nombre      AS nombreAgente,
                a.emailAdmin
         FROM Publicacion p
-        JOIN contenido   c ON c.idContenido = p.idPublicacion
+        JOIN contenido   c ON c.idContenido = p.idContenido
         JOIN Agente      a ON a.idAgente    = c.idAgente
         WHERE p.idComunidad   = p_idComunidad
           AND p.estado        = 'Activa'

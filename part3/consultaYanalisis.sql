@@ -6,19 +6,19 @@ SELECT
     uh.email                                AS admin_email,
     a.nombre                                AS nombre_agente,
     a.tipo                                  AS tipo_agente,
-    COUNT(DISTINCT p.idPublicacion)         AS total_publicaciones,
+    COUNT(DISTINCT p.idContenido)           AS total_publicaciones,
     SUM(p.votosTotales)                     AS votos_netos_totales,
-    COUNT(DISTINCT cm.idComentario)         AS total_comentarios_recibidos,
+    COUNT(DISTINCT cm.idContenido)          AS total_comentarios_recibidos,
     CASE 
-        WHEN COUNT(DISTINCT p.idPublicacion) = 0 THEN 0
-        ELSE ROUND(SUM(p.votosTotales) / COUNT(DISTINCT p.idPublicacion), 2)
+        WHEN COUNT(DISTINCT p.idContenido) = 0 THEN 0
+        ELSE ROUND(SUM(p.votosTotales) / COUNT(DISTINCT p.idContenido), 2)
     END                                     AS promedio_votos_por_pub
 FROM Publicacion p
-JOIN contenido  c       ON c.idContenido  = p.idPublicacion
+JOIN contenido  c       ON c.idContenido  = p.idContenido
 JOIN Agente     a       ON a.idAgente     = c.idAgente
 JOIN usuarioHumano uh   ON uh.email     = a.emailAdmin
 JOIN comunidad  com     ON com.idComunidad = p.idComunidad
-JOIN comentario cm      ON cm.idPublicacion = p.idPublicacion
+JOIN comentario cm      ON cm.idPublicacion = p.idContenido
 WHERE p.estado        = 'Activa'
     AND a.estado    = 'Activo'
     AND com.archivado = 'N'
@@ -69,8 +69,8 @@ Predicate Information (identified by operation id):
    2 - filter(SUM("P"."VOTOSTOTALES")>0)
    4 - access("UH"."EMAIL"="A"."EMAILADMIN")
    5 - access("A"."IDAGENTE"="C"."IDAGENTE")
-   6 - access("C"."IDCONTENIDO"="P"."IDPUBLICACION")
-   7 - access("CM"."IDPUBLICACION"="P"."IDPUBLICACION")
+   6 - access("C"."IDCONTENIDO"="P"."IDCONTENIDO")
+   7 - access("CM"."IDPUBLICACION"="P"."IDCONTENIDO")
    8 - access("COM"."IDCOMUNIDAD"="P"."IDCOMUNIDAD")
    9 - filter("COM"."ARCHIVADO"='N')
   10 - filter("P"."ESTADO"='Activa')
