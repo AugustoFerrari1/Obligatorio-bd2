@@ -1,5 +1,5 @@
  
--- TRG-01: contenido - antes de insertar
+-- TRG-01: contenido
 CREATE OR REPLACE TRIGGER trg_contenido_before_insert
 BEFORE INSERT ON contenido
 FOR EACH ROW
@@ -27,7 +27,7 @@ END;
 /
 
 
--- TRG-02: Publicacion - antes de insertar
+-- TRG-02: Publicacion
 CREATE OR REPLACE TRIGGER trg_publicacion_before_insert
 BEFORE INSERT ON Publicacion
 FOR EACH ROW
@@ -70,7 +70,7 @@ END;
 /
 
 
--- TRG-03: comentario - antes de insertar
+-- TRG-03: comentario
 CREATE OR REPLACE TRIGGER trg_comentario_before_insert
 BEFORE INSERT ON comentario
 FOR EACH ROW
@@ -103,8 +103,8 @@ BEGIN
     INTO v_es_miembro
     FROM participa
     WHERE idAgente    = v_id_agente
-        AND idComunidad = v_id_comunidad;
-        AND rol         = 'Miembro Activo'
+        AND idComunidad = v_id_comunidad
+        AND rol         = 'Miembro Activo';
 
     IF v_es_miembro = 0 THEN
         RAISE_APPLICATION_ERROR(-20006,
@@ -160,7 +160,7 @@ AFTER INSERT ON vota
 FOR EACH ROW
 BEGIN
     UPDATE Publicacion
-       SET votosTotales = votosTotales + :NEW.valor
+       SET votosTotales = votosTotales + :NEW.tipoVoto
      WHERE idContenido = :NEW.idPublicacion;
 END;
 /
@@ -207,8 +207,7 @@ BEGIN
 END;
 /
 
--- TRG-07
--- Valida que el cedente sea el administrador actual del agente especifico.
+-- TRG-07: Valida que el cedente sea el administrador actual del agente especifico.
 CREATE OR REPLACE TRIGGER trg_transferencia_before_insert
 BEFORE INSERT ON transferencia
 FOR EACH ROW
@@ -228,9 +227,7 @@ END;
 /
 
 
-
--- TRG-08
--- Actualiza emailAdmin en el Agente especifico.
+-- TRG-08: Actualiza emailAdmin en el Agente especifico.
 CREATE OR REPLACE TRIGGER trg_transferencia_after_insert
 AFTER INSERT ON transferencia
 FOR EACH ROW
@@ -238,5 +235,29 @@ BEGIN
     UPDATE Agente
     SET    emailAdmin = :NEW.emailReceptor
     WHERE  idAgente   = :NEW.idAgente;
+END;
+/
+
+-- TRG-09: Consistencia de fechaArchivado en comunidad
+CREATE OR REPLACE TRIGGER trg_comunidad_archivado
+BEFORE INSERT OR UPDATE ON comunidad
+FOR EACH ROW
+BEGIN
+    IF :NEW.archivado = 'N' AND :NEW.fechaArchivado IS NOT NULL THEN
+        RAISE_APPLICATION_ERROR(-20014, 'Si la comunidad no esta archivada (N), la fecha debe ser NULL.');
+    ELSIF :NEW.archivado = 'S' AND :NEW.fechaArchivado IS NULL THEN
+        :NEW.fechaArchivado := SYSDATE;
+    END IF;
+END;
+/
+
+-- TRG-10: Borrado logico en la vista vw_publicacion
+CREATE OR REPLACE TRIGGER trg_vw_publicacion_delete
+INSTEAD OF DELETE ON vw_publicacion
+FOR EACH ROW
+BEGIN
+    UPDATE Publicacion
+    SET estado = 'Eliminada'
+    WHERE idContenido = :OLD.idContenido;
 END;
 /
