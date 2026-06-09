@@ -30,7 +30,7 @@ CREATE TABLE Agente (
     idAgente        INT             NOT NULL,
     nombre          VARCHAR2(100)   NOT NULL,
     fechaCreacion   DATE            NOT NULL,
-    descripcion     CLOB,
+    descripcion     VARCHAR2(200),
     tipo            VARCHAR2(15)    NOT NULL,
     config          VARCHAR2(10)    NOT NULL,
     estado          VARCHAR2(15)    DEFAULT 'Activo' NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE historial (
     idAgente        INT     NOT NULL,
     version         INT     NOT NULL,
     fechaAplicacion DATE    NOT NULL,
-    descripcion     CLOB,
+    descripcion     VARCHAR2(200),
     CONSTRAINT pk_historial   PRIMARY KEY (idAgente, version),
     CONSTRAINT fk_hist_agente FOREIGN KEY (idAgente)
         REFERENCES Agente(idAgente) ON DELETE CASCADE
@@ -79,7 +79,7 @@ CREATE TABLE transferencia (
 CREATE TABLE comunidad (
     idComunidad     INT             NOT NULL,
     nombre          VARCHAR2(100)   NOT NULL,
-    descripcion     CLOB,
+    descripcion     VARCHAR2(200),
     fechaCreacion   DATE            NOT NULL,
     temaPrincipal   VARCHAR2(100),
     archivado       CHAR(1)         DEFAULT 'N' NOT NULL,
@@ -123,7 +123,7 @@ CREATE TABLE contenido (
 CREATE TABLE Publicacion (
     idContenido     INT             NOT NULL,
     titulo          VARCHAR2(255)   NOT NULL,
-    cuerpo          CLOB            NOT NULL,
+    cuerpo          VARCHAR2(200)            NOT NULL,
     estado          VARCHAR2(10)    DEFAULT 'Activa' NOT NULL,
     votosTotales    INT             DEFAULT 0 NOT NULL,
     idComunidad     INT             NOT NULL,
@@ -141,11 +141,11 @@ CREATE TABLE cita (
     idPublicacionCitada INT   NOT NULL,
     fechaCita           DATE  NOT NULL,
     CONSTRAINT pk_cita        PRIMARY KEY (idPublicacionOrigen, idPublicacionCitada),
+    CONSTRAINT ck_cita_distinta CHECK (idPublicacionOrigen <> idPublicacionCitada),
     CONSTRAINT fk_cita_origen FOREIGN KEY (idPublicacionOrigen)
         REFERENCES Publicacion(idContenido),
     CONSTRAINT fk_cita_citada FOREIGN KEY (idPublicacionCitada)
         REFERENCES Publicacion(idContenido)
-    
 );
 
 -- comentario: subclase de contenido. idContenido = PK heredada de contenido (ISA).
@@ -155,7 +155,7 @@ CREATE TABLE cita (
 --   NULL = responde directamente a la publicacion.
 CREATE TABLE comentario (
     idContenido         INT         NOT NULL,
-    cuerpo              CLOB        NOT NULL,
+    cuerpo              VARCHAR2(200)        NOT NULL,
     idPublicacion       INT         NOT NULL,
     idComentarioPadre   INT,
     CONSTRAINT pk_comentario       PRIMARY KEY (idContenido),
@@ -168,15 +168,15 @@ CREATE TABLE comentario (
 );
 
 -- vota: Agente Observador vota una Publicacion. PK garantiza un voto por agente.
--- valor: 1 positivo | -1 negativo. votosTotales se actualiza via TRG-05.
+-- tipoVoto: 1 positivo | -1 negativo. votosTotales se actualiza via TRG-05.
 CREATE TABLE vota (
     idAgente        INT         NOT NULL,
     idPublicacion   INT         NOT NULL,
-    valor           INT         NOT NULL,
+    tipoVoto        INT         NOT NULL,
     fecha           DATE        NOT NULL,
     hora            VARCHAR2(8) NOT NULL,
     CONSTRAINT pk_vota           PRIMARY KEY (idAgente, idPublicacion),
-    CONSTRAINT ck_vota_valor     CHECK (valor IN (1, -1)),
+    CONSTRAINT ck_vota_valor     CHECK (tipoVoto IN (1, -1)),
     CONSTRAINT fk_vota_agente    FOREIGN KEY (idAgente)
         REFERENCES Agente(idAgente),
     CONSTRAINT fk_vota_pub       FOREIGN KEY (idPublicacion)
@@ -202,3 +202,8 @@ CREATE TABLE modera (
     CONSTRAINT fk_mod_comunidad FOREIGN KEY (idComunidad)
         REFERENCES comunidad(idComunidad)
 );
+
+-- Vistas
+-- Vista para filtrar publicaciones eliminadas
+CREATE OR REPLACE VIEW vw_publicacion AS
+SELECT * FROM Publicacion WHERE estado <> 'Eliminada';
