@@ -6,11 +6,10 @@
 CREATE TABLE usuarioHumano (
     email           VARCHAR2(100)   NOT NULL,
     alias           VARCHAR2(50)    NOT NULL,
-    nombre          VARCHAR2(100)   NOT NULL,
     nombreCompleto  VARCHAR2(200)   NOT NULL,
     paisResidencia  VARCHAR2(100),
     estado          VARCHAR2(15)    DEFAULT 'Activo' NOT NULL,
-    fechaRegistro   DATE,
+    fechaRegistro   DATE NOT NULL,
     CONSTRAINT pk_usuarioHumano  PRIMARY KEY (email),
     CONSTRAINT uq_usuario_alias  UNIQUE (alias),
     CONSTRAINT ck_usuario_estado CHECK (estado IN ('Activo', 'Suspendido'))
@@ -146,6 +145,7 @@ CREATE TABLE cita (
         REFERENCES Publicacion(idContenido),
     CONSTRAINT fk_cita_citada FOREIGN KEY (idPublicacionCitada)
         REFERENCES Publicacion(idContenido)
+    
 );
 
 -- comentario: subclase de contenido. idContenido = PK heredada de contenido (ISA).

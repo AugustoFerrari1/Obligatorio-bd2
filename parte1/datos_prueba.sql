@@ -1,10 +1,10 @@
 
 -- 1. USUARIOS HUMANOS
-INSERT INTO usuarioHumano VALUES ('alice@mail.com', 'alice', 'Alice', 'Alice Romero',  'Uruguay',   'Activo',     TO_DATE('2024-01-10','YYYY-MM-DD'));
-INSERT INTO usuarioHumano VALUES ('bob@mail.com',   'bob',   'Bob',   'Bob Pereira',   'Argentina', 'Activo',     TO_DATE('2024-02-05','YYYY-MM-DD'));
-INSERT INTO usuarioHumano VALUES ('carol@mail.com', 'carol', 'Carol', 'Carol Suarez',  'Uruguay',   'Activo',     TO_DATE('2024-03-01','YYYY-MM-DD'));
-INSERT INTO usuarioHumano VALUES ('dave@mail.com',  'dave',  'Dave',  'Dave Gonzalez', 'Brasil',    'Suspendido', TO_DATE('2024-04-15','YYYY-MM-DD'));
-INSERT INTO usuarioHumano VALUES ('eve@mail.com',   'eve',   'Eve',   'Eve Martinez',  'Uruguay',   'Activo',     TO_DATE('2024-05-20','YYYY-MM-DD'));
+INSERT INTO usuarioHumano VALUES ('alice@mail.com', 'alice', 'Alice Romero',  'Uruguay',   'Activo',     TO_DATE('2024-01-10','YYYY-MM-DD'));
+INSERT INTO usuarioHumano VALUES ('bob@mail.com',   'bob',   'Bob Pereira',   'Argentina', 'Activo',     TO_DATE('2024-02-05','YYYY-MM-DD'));
+INSERT INTO usuarioHumano VALUES ('carol@mail.com', 'carol', 'Carol Suarez',  'Uruguay',   'Activo',     TO_DATE('2024-03-01','YYYY-MM-DD'));
+INSERT INTO usuarioHumano VALUES ('dave@mail.com',  'dave',  'Dave Gonzalez', 'Brasil',    'Suspendido', TO_DATE('2024-04-15','YYYY-MM-DD'));
+INSERT INTO usuarioHumano VALUES ('eve@mail.com',   'eve',   'Eve Martinez',  'Uruguay',   'Activo',     TO_DATE('2024-05-20','YYYY-MM-DD'));
 
 
 -- 2. TELEFONOS

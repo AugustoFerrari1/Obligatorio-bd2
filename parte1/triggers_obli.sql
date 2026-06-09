@@ -104,6 +104,7 @@ BEGIN
     FROM participa
     WHERE idAgente    = v_id_agente
         AND idComunidad = v_id_comunidad;
+        AND rol         = 'Miembro Activo'
 
     IF v_es_miembro = 0 THEN
         RAISE_APPLICATION_ERROR(-20006,
