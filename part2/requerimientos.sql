@@ -327,7 +327,7 @@ BEGIN
     FOR v_fila IN (
         SELECT p.votosTotales,
                p.titulo,
-               p.fechaCreacion,
+               c.fechaCreacion,
                a.nombre      AS nombreAgente,
                a.emailAdmin
         FROM Publicacion p
@@ -335,7 +335,7 @@ BEGIN
         JOIN Agente      a ON a.idAgente    = c.idAgente
         WHERE p.idComunidad   = p_idComunidad
           AND p.estado        = 'Activa'
-          AND p.fechaCreacion >= SYSDATE - 30
+          AND c.fechaCreacion >= SYSDATE - 30
           AND (p_emailAdmin IS NULL OR a.emailAdmin = p_emailAdmin)
         ORDER BY p.votosTotales DESC
         FETCH FIRST 10 ROWS ONLY
