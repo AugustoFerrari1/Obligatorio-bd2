@@ -295,3 +295,149 @@ db.eventos.insertMany([
   }
 
 ])
+
+javascript
+db.eventos.insertMany([
+/* ───────────────── ERROR ───────────────── */
+{
+  idAgente: 1,
+  nombreAgente: "GenBot-Alpha",
+  tipoAgente: "Generador",
+  estadoAgente: "Activo",
+  emailAdmin: "alice@mail.com",
+
+  fechaHora: ISODate("2026-06-01T13:12:00Z"),
+
+  tipoEvento: "error",
+  criticidad: "Alta",
+
+  detalle: {
+    codigoError: "ERR-504",
+    mensaje: "Timeout al generar respuesta.",
+    reintentando: true
+  }
+},
+
+/* ───────────────── ACCESO NO CONTROLADO ───────────────── */
+
+{
+  idAgente: 3,
+  nombreAgente: "ModBot-One",
+  tipoAgente: "Moderador",
+  estadoAgente: "Activo",
+  emailAdmin: "carol@mail.com",
+
+  fechaHora: ISODate("2026-06-02T02:17:00Z"),
+
+  tipoEvento: "acceso no controlado",
+  criticidad: "Alta",
+
+  detalle: {
+    recursoAccedido: "/admin/configuracion-global",
+    motivo: "Intento de lectura fuera del alcance autorizado.",
+    ip: "192.168.1.55"
+  }
+},
+
+/* ───────────────── INTERACCION (usuario) ───────────────── */
+
+{
+  idAgente: 2,
+  nombreAgente: "GenBot-Beta",
+  tipoAgente: "Generador",
+  estadoAgente: "Activo",
+  emailAdmin: "carol@mail.com",
+
+  fechaHora: ISODate("2026-06-02T15:45:00Z"),
+
+  tipoEvento: "interaccion",
+  criticidad: "Baja",
+
+  detalle: {
+    tipoInteraccion: "interaccion con usuario",
+    idUsuario: "alice@mail.com",
+    accion: "respuesta_generada",
+    hora: 15
+  }
+},
+
+/* ───────────────── METRICA ───────────────── */
+
+{
+  idAgente: 1,
+  nombreAgente: "GenBot-Alpha",
+  tipoAgente: "Generador",
+  estadoAgente: "Activo",
+  emailAdmin: "alice@mail.com",
+
+  fechaHora: ISODate("2026-06-03T18:20:00Z"),
+
+  tipoEvento: "metrica",
+  criticidad: "Media",
+
+  detalle: {
+    tiempoRespuestaMs: 1280,
+    tokensProcesados: 5200,
+    usoMemoriaMb: 742,
+    cargaCpu: 67
+  }
+},
+
+/* ───────────────── DECISION (extra) ───────────────── */
+
+{
+  idAgente: 3,
+  nombreAgente: "ModBot-One",
+  tipoAgente: "Moderador",
+  estadoAgente: "Activo",
+  emailAdmin: "carol@mail.com",
+
+  fechaHora: ISODate("2026-06-03T11:00:00Z"),
+
+  tipoEvento: "decision",
+  criticidad: "Media",
+
+  detalle: {
+    contexto: "clasificacion automatica de contenido",
+
+    parametrosEntrada: {
+      idContenido: 14,
+      comunidad: 1
+    },
+
+    alternativasEvaluadas: [
+      "aprobar",
+      "revisar",
+      "bloquear"
+    ],
+
+    respuesta: "revisar",
+
+    modeloUtilizado: "ModBot-One v2"
+  }
+},
+
+/* ───────────────── CREACION (extra) ───────────────── */
+
+{
+  idAgente: 1,
+  nombreAgente: "GenBot-Alpha",
+  tipoAgente: "Generador",
+  estadoAgente: "Activo",
+  emailAdmin: "alice@mail.com",
+
+  fechaHora: ISODate("2026-06-04T09:00:00Z"),
+
+  tipoEvento: "creacion",
+  criticidad: "Baja",
+
+  detalle: {
+    entidadCreada: "comentario",
+    idEntidad: 20,
+    comunidad: 1,
+    titulo: null
+  }
+}
+
+])
+

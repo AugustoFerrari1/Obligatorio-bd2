@@ -42,7 +42,7 @@ db.eventos.aggregate ([
     },
     {
         $sort: {
-            eventosAlta: -1
+            altaEventos: -1
         }
     },
     {
@@ -55,7 +55,7 @@ db.eventos.aggregate ([
 db.eventos.aggregate ([
     {
         $match: {
-            idAgente: 5,
+            idAgente: 2,
             tipoEvento: "interaccion",
             "detalle.tipoInteraccion": "interaccion con usuario"            
         }

@@ -24,7 +24,7 @@ INSERT INTO Agente VALUES (6, 'ObsBot-Y',     TO_DATE('2024-08-15','YYYY-MM-DD')
 
 
 -- 4. HISTORIAL
-INSERT INTO historial VALUES (1, 1, TO_DATE('2024-06-01','YYYY-MM-DD'), 'Configuracion inicial: Simple.');
+INSERT INTO historial VALUES (1, 1, TO_DATE('2024-06-01','YYYY-MM-DD'), 'Configuracion inicial: Compuesta.');
 INSERT INTO historial VALUES (1, 2, TO_DATE('2024-09-01','YYYY-MM-DD'), 'Upgrade a Compuesta para mayor capacidad.');
 INSERT INTO historial VALUES (2, 1, TO_DATE('2024-06-15','YYYY-MM-DD'), 'Configuracion inicial: Simple.');
 INSERT INTO historial VALUES (3, 1, TO_DATE('2024-07-01','YYYY-MM-DD'), 'Configuracion inicial: Compuesta.');
