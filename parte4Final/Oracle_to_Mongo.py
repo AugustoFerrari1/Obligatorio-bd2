@@ -7,8 +7,8 @@ from datetime import datetime
 #PARTE2
 #Conectamos con Oracle
 conexion_oracle = oracledb.connect(
-    user="AGUS_O",
-    password="tricolor",
+    user="xxxx",
+    password="xxxx",
     dsn="localhost:1521/XE"
 )
 cursor= conexion_oracle.cursor()
