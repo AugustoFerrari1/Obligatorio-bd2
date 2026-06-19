@@ -1,0 +1,134 @@
+[
+  {
+    "plan_table_output": "Plan hash value: 3571076205"
+  },
+  {
+    "plan_table_output": " "
+  },
+  {
+    "plan_table_output": "---------------------------------------------------------------------------------------------------------"
+  },
+  {
+    "plan_table_output": "| Id  | Operation                            | Name             | Rows  | Bytes | Cost (%CPU)| Time     |"
+  },
+  {
+    "plan_table_output": "---------------------------------------------------------------------------------------------------------"
+  },
+  {
+    "plan_table_output": "|   0 | SELECT STATEMENT                     |                  |     6 |  2280 |    20  (10)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|   1 |  SORT ORDER BY                       |                  |     6 |  2280 |    20  (10)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|*  2 |   FILTER                             |                  |       |       |            |          |"
+  },
+  {
+    "plan_table_output": "|   3 |    HASH GROUP BY                     |                  |     6 |  2280 |    20  (10)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|*  4 |     HASH JOIN                        |                  |     6 |  2280 |    18   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|   5 |      NESTED LOOPS                    |                  |     3 |  1062 |    15   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|   6 |       NESTED LOOPS                   |                  |     3 |  1062 |    15   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|   7 |        NESTED LOOPS                  |                  |     3 |   825 |    12   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|   8 |         NESTED LOOPS                 |                  |     3 |   621 |     9   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|   9 |          NESTED LOOPS                |                  |     3 |   216 |     6   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|* 10 |           TABLE ACCESS FULL          | PUBLICACION      |     3 |   138 |     3   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|  11 |           TABLE ACCESS BY INDEX ROWID| CONTENIDO        |     1 |    26 |     1   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|* 12 |            INDEX UNIQUE SCAN         | PK_CONTENIDO     |     1 |       |     0   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|* 13 |          TABLE ACCESS BY INDEX ROWID | AGENTE           |     1 |   135 |     1   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|* 14 |           INDEX UNIQUE SCAN          | PK_AGENTE        |     1 |       |     0   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|* 15 |         TABLE ACCESS BY INDEX ROWID  | COMUNIDAD        |     1 |    68 |     1   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|* 16 |          INDEX UNIQUE SCAN           | PK_COMUNIDAD     |     1 |       |     0   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|* 17 |        INDEX UNIQUE SCAN             | PK_USUARIOHUMANO |     1 |       |     0   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|  18 |       TABLE ACCESS BY INDEX ROWID    | USUARIOHUMANO    |     1 |    79 |     1   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "|  19 |      TABLE ACCESS FULL               | COMENTARIO       |     6 |   156 |     3   (0)| 00:00:01 |"
+  },
+  {
+    "plan_table_output": "---------------------------------------------------------------------------------------------------------"
+  },
+  {
+    "plan_table_output": " "
+  },
+  {
+    "plan_table_output": "Predicate Information (identified by operation id):"
+  },
+  {
+    "plan_table_output": "---------------------------------------------------"
+  },
+  {
+    "plan_table_output": " "
+  },
+  {
+    "plan_table_output": "   2 - filter(SUM(\"P\".\"VOTOSTOTALES\")>0)"
+  },
+  {
+    "plan_table_output": "   4 - access(\"CM\".\"IDPUBLICACION\"=\"P\".\"IDCONTENIDO\")"
+  },
+  {
+    "plan_table_output": "  10 - filter(\"P\".\"ESTADO\"='Activa')"
+  },
+  {
+    "plan_table_output": "  12 - access(\"C\".\"IDCONTENIDO\"=\"P\".\"IDCONTENIDO\")"
+  },
+  {
+    "plan_table_output": "  13 - filter(\"A\".\"ESTADO\"='Activo')"
+  },
+  {
+    "plan_table_output": "  14 - access(\"A\".\"IDAGENTE\"=\"C\".\"IDAGENTE\")"
+  },
+  {
+    "plan_table_output": "  15 - filter(\"COM\".\"ARCHIVADO\"='N')"
+  },
+  {
+    "plan_table_output": "  16 - access(\"COM\".\"IDCOMUNIDAD\"=\"P\".\"IDCOMUNIDAD\")"
+  },
+  {
+    "plan_table_output": "  17 - access(\"UH\".\"EMAIL\"=\"A\".\"EMAILADMIN\")"
+  },
+  {
+    "plan_table_output": " "
+  },
+  {
+    "plan_table_output": "Note"
+  },
+  {
+    "plan_table_output": "-----"
+  },
+  {
+    "plan_table_output": "   - dynamic statistics used: dynamic sampling (level=2)"
+  },
+  {
+    "plan_table_output": "   - this is an adaptive plan"
+  }
+]
