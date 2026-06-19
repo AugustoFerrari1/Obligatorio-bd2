@@ -131,29 +131,29 @@ END sp_generar_publicacion;
 -- Parametros de entrada:
 --   p_idAgente      : agente que vota
 --   p_idPublicacion : publicacion votada
---   p_valor         : 1 (positivo) o -1 (negativo)
+--   p_tipoVoto         : 1 (positivo) o -1 (negativo)
 --   p_fecha         : fecha del voto
 --   p_hora          : hora del voto
 
 CREATE OR REPLACE PROCEDURE sp_emitir_voto (
     p_idAgente      IN INT,
     p_idPublicacion IN INT,
-    p_valor         IN INT,
+    p_tipoVoto       IN INT,
     p_fecha         IN DATE,
     p_hora          IN VARCHAR2
 ) AS
 BEGIN
-    -- Validar que el valor sea 1 o -1
-    IF p_valor != 1 AND p_valor != -1 THEN
-        DBMS_OUTPUT.PUT_LINE('Error: el valor del voto debe ser 1 o -1.');
+    -- Validar que el tipoVoto sea 1 o -1
+    IF p_tipoVoto != 1 AND p_tipoVoto != -1 THEN
+        DBMS_OUTPUT.PUT_LINE('Error: el tipoVoto del voto debe ser 1 o -1.');
         RETURN;
     END IF;
 
     -- Insertar el voto
     -- TRG-04 valida tipo Observador, activo y pub no eliminada
     -- TRG-05 actualiza votosTotales en Publicacion automaticamente
-    INSERT INTO vota (idAgente, idPublicacion, valor, fecha, hora)
-    VALUES (p_idAgente, p_idPublicacion, p_valor, p_fecha, p_hora);
+    INSERT INTO vota (idAgente, idPublicacion, tipoVoto, fecha, hora)
+    VALUES (p_idAgente, p_idPublicacion, p_tipoVoto, p_fecha, p_hora);
 
     DBMS_OUTPUT.PUT_LINE('Voto registrado correctamente.');
 END sp_emitir_voto;
