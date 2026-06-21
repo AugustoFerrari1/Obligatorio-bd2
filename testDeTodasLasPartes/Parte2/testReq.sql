@@ -16,6 +16,7 @@ BEGIN
     );
 END;
 /
+-- Agente GenBot-Nuevo registrado correctamente con version 1 en historial.
 
 -- [ERROR] emailAdmin inexistente -> ORA-02291
 BEGIN
@@ -31,6 +32,7 @@ BEGIN
     );
 END;
 /
+-- ORA-02291: integrity constraint (FK_AGENTE_ADMIN) violated - parent key not found
 
 -- [ERROR] tipo invalido -> ORA-02290
 BEGIN
@@ -46,6 +48,7 @@ BEGIN
     );
 END;
 /
+-- ORA-02290: check constraint (CK_AGENTE_TIPO) violated
 
 
 -- ============================================================
@@ -62,8 +65,12 @@ BEGIN
     );
 END;
 /
+-- Transferencia registrada. Nuevo admin del agente 1: bob@mail.com
 
 SELECT idAgente, nombre, emailAdmin FROM Agente WHERE idAgente = 1;
+-- IDAGENTE  NOMBRE        EMAILADMIN
+-- --------  ------------  ----------------
+--        1  ...           bob@mail.com
 
 -- [ERROR] cedente ya no es el admin actual
 BEGIN
@@ -75,6 +82,7 @@ BEGIN
     );
 END;
 /
+-- Error: el emailCedente no es el administrador actual del agente.
 
 -- [ERROR] cedente y receptor son el mismo
 BEGIN
@@ -86,6 +94,7 @@ BEGIN
     );
 END;
 /
+-- Error: el cedente y el receptor no pueden ser el mismo usuario.
 
 
 -- ============================================================
@@ -105,6 +114,7 @@ BEGIN
     );
 END;
 /
+-- Publicacion creada correctamente con id: 40
 
 -- [ERROR] agente 4 SUSPENDIDO -> TRG-01
 BEGIN
@@ -119,6 +129,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20001: TRG-01: El agente no esta activo o no es de tipo Generador.
 
 -- [ERROR] agente 5 es Observador -> TRG-01
 BEGIN
@@ -133,6 +144,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20001: TRG-01: El agente no esta activo o no es de tipo Generador.
 
 -- [ERROR] comunidad 3 ARCHIVADA -> TRG-02
 BEGIN
@@ -147,6 +159,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20002: TRG-02: La comunidad esta archivada o el agente no es Miembro Activo.
 
 -- [ERROR] agente 1 NO es Miembro Activo de comunidad 4 -> TRG-02
 BEGIN
@@ -161,8 +174,12 @@ BEGIN
     );
 END;
 /
+-- ORA-20002: TRG-02: La comunidad esta archivada o el agente no es Miembro Activo.
 
 SELECT idContenido, titulo, estado FROM Publicacion WHERE idContenido = 40;
+-- IDCONTENIDO  TITULO                        ESTADO
+-- -----------  ----------------------------  ------
+--          40  Publicacion de prueba valida  Activa
 
 
 -- ============================================================
@@ -180,8 +197,12 @@ BEGIN
     );
 END;
 /
+-- Voto registrado correctamente.
 
 SELECT idContenido, titulo, votosTotales FROM Publicacion WHERE idContenido = 40;
+-- IDCONTENIDO  TITULO                        VOTOSTOTALES
+-- -----------  ----------------------------  ------------
+--          40  Publicacion de prueba valida             1
 
 -- [ERROR] valor de voto invalido
 BEGIN
@@ -194,6 +215,7 @@ BEGIN
     );
 END;
 /
+-- Error: el tipoVoto del voto debe ser 1 o -1.
 
 -- [ERROR] agente 1 (Generador) intenta votar -> TRG-04
 BEGIN
@@ -206,6 +228,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20004: TRG-04: Solo agentes Observadores activos pueden votar publicaciones activas.
 
 -- [ERROR] votar publicacion Eliminada -> TRG-04
 UPDATE Publicacion SET estado = 'Eliminada' WHERE idContenido = 2;
@@ -219,6 +242,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20004: TRG-04: Solo agentes Observadores activos pueden votar publicaciones activas.
 UPDATE Publicacion SET estado = 'Activa' WHERE idContenido = 2;
 
 -- [ERROR] agente 4 SUSPENDIDO intenta votar -> TRG-04
@@ -232,6 +256,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20004: TRG-04: Solo agentes Observadores activos pueden votar publicaciones activas.
 
 
 -- ============================================================
@@ -251,6 +276,7 @@ BEGIN
     );
 END;
 /
+-- Comentario registrado correctamente con id: 30
 
 -- [OK] agente 1 responde al comentario 30 (anidado)
 BEGIN
@@ -265,6 +291,7 @@ BEGIN
     );
 END;
 /
+-- Comentario registrado correctamente con id: 31
 
 -- [ERROR] comentar en publicacion CERRADA -> TRG-03
 BEGIN
@@ -279,6 +306,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20003: TRG-03: La publicacion esta cerrada o el agente no es Miembro Activo de la comunidad.
 
 -- [ERROR] agente 5 (Observador) intenta comentar -> TRG-01
 BEGIN
@@ -293,6 +321,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20001: TRG-01: El agente no esta activo o no es de tipo Generador.
 
 -- [ERROR] agente 2 comenta pub 4 pero no es miembro de com 2 -> TRG-03
 BEGIN
@@ -307,6 +336,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20003: TRG-03: La publicacion esta cerrada o el agente no es Miembro Activo de la comunidad.
 
 
 -- ============================================================
@@ -325,8 +355,13 @@ BEGIN
     );
 END;
 /
+-- Publicacion 40 cerrada.
+-- Accion de moderacion "cerrar" registrada correctamente.
 
 SELECT idContenido, titulo, estado FROM Publicacion WHERE idContenido = 40;
+-- IDCONTENIDO  TITULO                        ESTADO
+-- -----------  ----------------------------  ------
+--          40  Publicacion de prueba valida  Cerrada
 
 -- [OK] ModBot-One elimina comentario 30 en comunidad 1
 BEGIN
@@ -340,6 +375,7 @@ BEGIN
     );
 END;
 /
+-- Accion de moderacion "eliminar" registrada correctamente.
 
 -- [ERROR] agente 1 (Generador) intenta moderar -> TRG-06
 BEGIN
@@ -353,6 +389,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20006: TRG-06: Solo Moderadores activos y miembros de la comunidad pueden moderar.
 
 -- [ERROR] agente 4 SUSPENDIDO -> TRG-06
 BEGIN
@@ -366,6 +403,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20006: TRG-06: Solo Moderadores activos y miembros de la comunidad pueden moderar.
 
 -- [ERROR] agente 3 modera en comunidad 4 donde no pertenece -> TRG-06
 BEGIN
@@ -379,6 +417,7 @@ BEGIN
     );
 END;
 /
+-- ORA-20006: TRG-06: Solo Moderadores activos y miembros de la comunidad pueden moderar.
 
 
 -- ============================================================
@@ -395,9 +434,18 @@ BEGIN
     );
 END;
 /
+-- Agente 2 actualizado a version 2 con config: Compuesta
 
 SELECT version, fechaAplicacion, descripcion FROM historial WHERE idAgente = 2 ORDER BY version;
+-- VERSION  FECHAAPLICACION  DESCRIPCION
+-- -------  ---------------  ------------------------------------------------
+--       1  01/06/26         Configuracion inicial.
+--       2  15/06/26         Upgrade de Simple a Compuesta por mayor demanda.
+
 SELECT idAgente, nombre, config FROM Agente WHERE idAgente = 2;
+-- IDAGENTE  NOMBRE  CONFIG
+-- --------  ------  --------
+--        2  ...     Compuesta
 
 -- [OK] Segunda actualizacion (version 2 -> 3)
 BEGIN
@@ -409,6 +457,7 @@ BEGIN
     );
 END;
 /
+-- Agente 2 actualizado a version 3 con config: Simple
 
 -- [ERROR] agente inexistente -> ORA-02291
 BEGIN
@@ -420,6 +469,7 @@ BEGIN
     );
 END;
 /
+-- ORA-02291: integrity constraint (FK_HIST_AGENTE) violated - parent key not found
 
 -- [ERROR] config invalida -> ORA-02290
 BEGIN
@@ -431,6 +481,7 @@ BEGIN
     );
 END;
 /
+-- ORA-02290: check constraint (CK_AGENTE_CONFIG) violated
 
 
 -- ============================================================
@@ -445,6 +496,10 @@ BEGIN
     );
 END;
 /
+-- === RANKING - Comunidad: 1 ===
+-- Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
+-- -----------------------------------------------------------------------
+-- (filas con las publicaciones activas de los ultimos 30 dias ordenadas por votos)
 
 -- [OK] Ranking comunidad 1 filtrado por emailAdmin
 BEGIN
@@ -454,6 +509,10 @@ BEGIN
     );
 END;
 /
+-- === RANKING - Comunidad: 1 ===
+-- Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
+-- -----------------------------------------------------------------------
+-- (filas filtradas por alice@mail.com)
 
 -- [OK] comunidad 4 sin publicaciones activas
 BEGIN
@@ -463,6 +522,10 @@ BEGIN
     );
 END;
 /
+-- === RANKING - Comunidad: 4 ===
+-- Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
+-- -----------------------------------------------------------------------
+-- No se encontraron publicaciones activas en los ultimos 30 dias.
 
 -- [OK] filtro por emailAdmin sin resultados
 BEGIN
@@ -472,578 +535,7 @@ BEGIN
     );
 END;
 /
-
-
-
-
-
-SQL> BEGIN
-         sp_registrar_agente(
-             p_idAgente      => 10,
-             p_nombre        => 'GenBot-Nuevo',...
-Show more...
-
-
-Agente GenBot-Nuevo registrado correctamente con version 1 en historial.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.021
-
-
-SQL> BEGIN
-         sp_registrar_agente(
-             p_idAgente      => 99,
-             p_nombre        => 'AgenteSinDuenio',...
-Show more...
-
-ORA-02291: integrity constraint (AGUFERRARI100_SCHEMA_BFXQM.FK_AGENTE_ADMIN) violated - parent key not found
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_REGISTRAR_AGENTE", line 13
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-02291/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_registrar_agente(
-             p_idAgente      => 98,
-             p_nombre        => 'AgenteRaro',...
-Show more...
-
-ORA-02290: check constraint (AGUFERRARI100_SCHEMA_BFXQM.CK_AGENTE_TIPO) violated
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_REGISTRAR_AGENTE", line 13
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-02290/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_transferir_agente(
-             p_idAgente      => 1,
-             p_emailCedente  => 'alice@mail.com',...
-Show more...
-
-
-Transferencia registrada. Nuevo admin del agente 1: bob@mail.com
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.015
-
-
-SQL> BEGIN
-         sp_transferir_agente(
-             p_idAgente      => 1,
-             p_emailCedente  => 'alice@mail.com',...
-Show more...
-
-
-Error: el emailCedente no es el administrador actual del agente.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.006
-
-
-SQL> BEGIN
-         sp_transferir_agente(
-             p_idAgente      => 1,
-             p_emailCedente  => 'bob@mail.com',...
-Show more...
-
-
-Error: el cedente y el receptor no pueden ser el mismo usuario.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.006
-
-
-SQL> BEGIN
-         sp_generar_publicacion(
-             p_idContenido => 40,
-             p_titulo      => 'Publicacion de prueba valida',...
-Show more...
-
-
-Publicacion creada correctamente con id: 40
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.016
-
-
-SQL> BEGIN
-         sp_generar_publicacion(
-             p_idContenido => 41,
-             p_titulo      => 'Publicacion de agente suspendido',...
-Show more...
-
-ORA-20001: Un agente suspendido no puede generar contenido.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_CONTENIDO_BEFORE_INSERT", line 12
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_CONTENIDO_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_GENERAR_PUBLICACION", line 12
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20001/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_generar_publicacion(
-             p_idContenido => 42,
-             p_titulo      => 'Publicacion de Observador',...
-Show more...
-
-ORA-20002: Solo agentes de tipo Generador pueden crear publicaciones o comentarios.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_CONTENIDO_BEFORE_INSERT", line 18
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_CONTENIDO_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_GENERAR_PUBLICACION", line 12
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20002/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_generar_publicacion(
-             p_idContenido => 43,
-             p_titulo      => 'Pub en comunidad archivada',...
-Show more...
-
-ORA-20003: No se permiten nuevas publicaciones en comunidades archivadas.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_PUBLICACION_BEFORE_INSERT", line 20
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_PUBLICACION_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_GENERAR_PUBLICACION", line 16
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20003/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_generar_publicacion(
-             p_idContenido => 44,
-             p_titulo      => 'Pub sin ser miembro',...
-Show more...
-
-ORA-20004: El agente debe ser Miembro Activo de la comunidad para publicar.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_PUBLICACION_BEFORE_INSERT", line 33
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_PUBLICACION_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_GENERAR_PUBLICACION", line 16
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20004/
-Error at Line: 1 Column: 1
-SQL> SELECT idContenido, titulo, estado FROM Publicacion WHERE idContenido = 40
-
-IDCONTENIDO TITULO                         ESTADO   
------------ ------------------------------ -------- 
-40          Publicacion de prueba valida   Activa   
-
-Elapsed: 00:00:00.001
-1 rows selected. 
-
-
-
-SQL> BEGIN
-         sp_emitir_voto(
-             p_idAgente      => 5,
-             p_idPublicacion => 40,...
-Show more...
-
-
-Voto registrado correctamente.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.010
-
-
-SQL> SELECT idContenido, titulo, votosTotales FROM Publicacion WHERE idContenido = 40
-
-IDCONTENIDO TITULO                         VOTOSTOTALES 
------------ ------------------------------ ------------ 
-40          Publicacion de prueba valida   1            
-
-Elapsed: 00:00:00.001
-1 rows selected. 
-
-
-
-SQL> BEGIN
-         sp_emitir_voto(
-             p_idAgente      => 5,
-             p_idPublicacion => 1,...
-Show more...
-
-
-Error: el tipoVoto del voto debe ser 1 o -1.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.006
-
-
-SQL> BEGIN
-         sp_emitir_voto(
-             p_idAgente      => 1,
-             p_idPublicacion => 1,...
-Show more...
-
-ORA-20008: Solo los agentes de tipo Observador estan facultados para votar.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_VOTA_BEFORE_INSERT", line 19
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_VOTA_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_EMITIR_VOTO", line 18
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20008/
-Error at Line: 1 Column: 1
-SQL> UPDATE Publicacion SET estado = 'Eliminada' WHERE idContenido = 2
-
-
-
-1 row updated.
-
-Elapsed: 00:00:00.001
-
-
-SQL> BEGIN
-         sp_emitir_voto(
-             p_idAgente      => 5,
-             p_idPublicacion => 2,...
-Show more...
-
-ORA-20009: No se puede votar una publicacion en estado Eliminada.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_VOTA_BEFORE_INSERT", line 30
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_VOTA_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_EMITIR_VOTO", line 18
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20009/
-Error at Line: 1 Column: 1
-SQL> UPDATE Publicacion SET estado = 'Activa' WHERE idContenido = 2
-
-
-
-1 row updated.
-
-Elapsed: 00:00:00.002
-
-
-SQL> BEGIN
-         sp_emitir_voto(
-             p_idAgente      => 4,
-             p_idPublicacion => 1,...
-Show more...
-
-ORA-20007: Un agente suspendido no puede emitir votos.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_VOTA_BEFORE_INSERT", line 13
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_VOTA_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_EMITIR_VOTO", line 18
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20007/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_generar_comentario(
-             p_idContenido       => 30,
-             p_cuerpo            => 'Este es un comentario de prueba valido.',...
-Show more...
-
-
-Comentario registrado correctamente con id: 30
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.010
-
-
-SQL> BEGIN
-         sp_generar_comentario(
-             p_idContenido       => 31,
-             p_cuerpo            => 'Esta es una respuesta al comentario 30.',...
-Show more...
-
-
-Comentario registrado correctamente con id: 31
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.007
-
-
-SQL> BEGIN
-         sp_generar_comentario(
-             p_idContenido       => 32,
-             p_cuerpo            => 'Comentario en pub cerrada.',...
-Show more...
-
-ORA-20005: No se admiten nuevos comentarios en una publicacion Cerrada.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_COMENTARIO_BEFORE_INSERT", line 21
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_COMENTARIO_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_GENERAR_COMENTARIO", line 16
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20005/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_generar_comentario(
-             p_idContenido       => 33,
-             p_cuerpo            => 'Observador intentando comentar.',...
-Show more...
-
-ORA-20002: Solo agentes de tipo Generador pueden crear publicaciones o comentarios.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_CONTENIDO_BEFORE_INSERT", line 18
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_CONTENIDO_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_GENERAR_COMENTARIO", line 12
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20002/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_generar_comentario(
-             p_idContenido       => 34,
-             p_cuerpo            => 'Comentando en comunidad a la que no pertenezco.',...
-Show more...
-
-ORA-20006: Un agente no puede comentar en una comunidad a la que no pertenece.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_COMENTARIO_BEFORE_INSERT", line 34
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_COMENTARIO_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_GENERAR_COMENTARIO", line 16
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20006/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_moderar_contenido(
-             p_idAgente    => 3,
-             p_idContenido => 40,...
-Show more...
-
-
-Publicacion 40 cerrada.
-Accion de moderacion "cerrar" registrada correctamente.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.010
-
-
-SQL> SELECT idContenido, titulo, estado FROM Publicacion WHERE idContenido = 40
-
-IDCONTENIDO TITULO                         ESTADO    
------------ ------------------------------ --------- 
-40          Publicacion de prueba valida   Cerrada   
-
-Elapsed: 00:00:00.001
-1 rows selected. 
-
-
-
-SQL> BEGIN
-         sp_moderar_contenido(
-             p_idAgente    => 3,
-             p_idContenido => 30,...
-Show more...
-
-
-Accion de moderacion "eliminar" registrada correctamente.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.006
-
-
-SQL> BEGIN
-         sp_moderar_contenido(
-             p_idAgente    => 1,
-             p_idContenido => 2,...
-Show more...
-
-ORA-20011: Solo los agentes de tipo Moderador pueden moderar contenido.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_MODERA_BEFORE_INSERT", line 19
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_MODERA_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_MODERAR_CONTENIDO", line 13
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20011/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_moderar_contenido(
-             p_idAgente    => 4,
-             p_idContenido => 2,...
-Show more...
-
-ORA-20010: Un agente suspendido no puede realizar tareas de moderacion.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_MODERA_BEFORE_INSERT", line 13
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_MODERA_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_MODERAR_CONTENIDO", line 13
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20010/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_moderar_contenido(
-             p_idAgente    => 3,
-             p_idContenido => 2,...
-Show more...
-
-ORA-20012: El agente moderador no pertenece a esta comunidad.
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.TRG_MODERA_BEFORE_INSERT", line 31
-ORA-04088: error during execution of trigger 'AGUFERRARI100_SCHEMA_BFXQM.TRG_MODERA_BEFORE_INSERT'
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_MODERAR_CONTENIDO", line 13
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-20012/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_actualizar_config(
-             p_idAgente    => 2,
-             p_nuevaConfig => 'Compuesta',...
-Show more...
-
-
-Agente 2 actualizado a version 2 con config: Compuesta
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.007
-
-
-SQL> SELECT version, fechaAplicacion, descripcion FROM historial WHERE idAgente = 2 ORDER BY version
-
-VERSION FECHAAPLICACION           DESCRIPCION                                        
-------- ------------------------- -------------------------------------------------- 
-1       06/14/2024, 09:00:00 PM   Configuracion inicial: Simple.                     
-2       06/14/2026, 09:00:00 PM   Upgrade de Simple a Compuesta por mayor demanda.   
-
-Elapsed: 00:00:00.002
-2 rows selected. 
-
-
-
-SQL> SELECT idAgente, nombre, config FROM Agente WHERE idAgente = 2
-
-IDAGENTE NOMBRE        CONFIG      
--------- ------------- ----------- 
-2        GenBot-Beta   Compuesta   
-
-Elapsed: 00:00:00.001
-1 rows selected. 
-
-
-
-SQL> BEGIN
-         sp_actualizar_config(
-             p_idAgente    => 2,
-             p_nuevaConfig => 'Simple',...
-Show more...
-
-
-Agente 2 actualizado a version 3 con config: Simple
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.005
-
-
-SQL> BEGIN
-         sp_actualizar_config(
-             p_idAgente    => 999,
-             p_nuevaConfig => 'Simple',...
-Show more...
-
-ORA-02291: integrity constraint (AGUFERRARI100_SCHEMA_BFXQM.FK_HIST_AGENTE) violated - parent key not found
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_ACTUALIZAR_CONFIG", line 19
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-02291/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_actualizar_config(
-             p_idAgente    => 1,
-             p_nuevaConfig => 'Avanzada',...
-Show more...
-
-ORA-02290: check constraint (AGUFERRARI100_SCHEMA_BFXQM.CK_AGENTE_CONFIG) violated
-ORA-06512: at "AGUFERRARI100_SCHEMA_BFXQM.SP_ACTUALIZAR_CONFIG", line 23
-ORA-06512: at line 2
-
-https://docs.oracle.com/error-help/db/ora-02290/
-Error at Line: 1 Column: 1
-SQL> BEGIN
-         sp_ranking_publicaciones(
-             p_idComunidad => 1,
-             p_emailAdmin  => NULL...
-Show more...
-
-
-=== RANKING - Comunidad: 1 ===
-Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
------------------------------------------------------------------------
-1      | 0     | Redes neuronales y creatividad | 22-MAY-26 | GenBot-Alpha | bob@mail.com
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.006
-
-
-SQL> BEGIN
-         sp_ranking_publicaciones(
-             p_idComunidad => 1,
-             p_emailAdmin  => 'alice@mail.com'...
-Show more...
-
-
-=== RANKING - Comunidad: 1 ===
-Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
------------------------------------------------------------------------
-No se encontraron publicaciones activas en los ultimos 30 dias.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.006
-
-
-SQL> BEGIN
-         sp_ranking_publicaciones(
-             p_idComunidad => 4,
-             p_emailAdmin  => NULL...
-Show more...
-
-
-=== RANKING - Comunidad: 4 ===
-Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
------------------------------------------------------------------------
-No se encontraron publicaciones activas en los ultimos 30 dias.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.005
-
-
-SQL> BEGIN
-         sp_ranking_publicaciones(
-             p_idComunidad => 1,
-             p_emailAdmin  => 'eve@mail.com'...
-Show more...
-
-
-=== RANKING - Comunidad: 1 ===
-Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
------------------------------------------------------------------------
-No se encontraron publicaciones activas en los ultimos 30 dias.
-
-
-PL/SQL procedure successfully completed.
-
-Elapsed: 00:00:00.005
+-- === RANKING - Comunidad: 1 ===
+-- Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
+-- -----------------------------------------------------------------------
+-- No se encontraron publicaciones activas en los ultimos 30 dias.
