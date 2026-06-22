@@ -295,8 +295,6 @@ db.eventos.insertMany([
   }
 
 ])
-
-javascript
 db.eventos.insertMany([
 /* ───────────────── ERROR ───────────────── */
 {
@@ -437,7 +435,148 @@ db.eventos.insertMany([
     comunidad: 1,
     titulo: null
   }
-}
+},
+
+{
+    idAgente: 3,
+    nombreAgente: "ModBot-One",
+    tipoAgente: "Moderador",
+    estadoAgente: "Activo",
+    emailAdmin: "carol@mail.com",
+    fechaHora: ISODate("2026-06-16T08:00:00Z"),
+    tipoEvento: "decision",
+    criticidad: "Alta",
+    detalle: {
+      contexto: "moderacion de contenido",
+      parametrosEntrada: ["idContenido: 1", "idComunidad: 1"],
+      alternativasEvaluadas: ["ocultar", "cerrar", "eliminar"],
+      resultado: "ocultar"
+    }
+  },
+  {
+    idAgente: 3,
+    nombreAgente: "ModBot-One",
+    tipoAgente: "Moderador",
+    estadoAgente: "Activo",
+    emailAdmin: "carol@mail.com",
+    fechaHora: ISODate("2026-06-17T09:00:00Z"),
+    tipoEvento: "decision",
+    criticidad: "Alta",
+    detalle: {
+      contexto: "moderacion de contenido",
+      parametrosEntrada: ["idContenido: 2", "idComunidad: 1"],
+      alternativasEvaluadas: ["ocultar", "cerrar", "eliminar"],
+      resultado: "cerrar"
+    }
+  },
+  {
+    idAgente: 3,
+    nombreAgente: "ModBot-One",
+    tipoAgente: "Moderador",
+    estadoAgente: "Activo",
+    emailAdmin: "carol@mail.com",
+    fechaHora: ISODate("2026-06-18T10:00:00Z"),
+    tipoEvento: "decision",
+    criticidad: "Alta",
+    detalle: {
+      contexto: "moderacion de contenido",
+      parametrosEntrada: ["idContenido: 4", "idComunidad: 2"],
+      alternativasEvaluadas: ["ocultar", "cerrar", "eliminar"],
+      resultado: "ocultar"
+    }
+  },
+  {
+    idAgente: 3,
+    nombreAgente: "ModBot-One",
+    tipoAgente: "Moderador",
+    estadoAgente: "Activo",
+    emailAdmin: "carol@mail.com",
+    fechaHora: ISODate("2026-06-19T11:00:00Z"),
+    tipoEvento: "decision",
+    criticidad: "Alta",
+    detalle: {
+      contexto: "moderacion de contenido",
+      parametrosEntrada: ["idContenido: 1", "idComunidad: 1"],
+      alternativasEvaluadas: ["ocultar", "cerrar", "eliminar"],
+      resultado: "eliminar"
+    }
+  },
+  {
+    idAgente: 3,
+    nombreAgente: "ModBot-One",
+    tipoAgente: "Moderador",
+    estadoAgente: "Activo",
+    emailAdmin: "carol@mail.com",
+    fechaHora: ISODate("2026-06-20T12:00:00Z"),
+    tipoEvento: "decision",
+    criticidad: "Alta",
+    detalle: {
+      contexto: "moderacion de contenido",
+      parametrosEntrada: ["idContenido: 2", "idComunidad: 1"],
+      alternativasEvaluadas: ["ocultar", "cerrar", "eliminar"],
+      resultado: "cerrar"
+    }
+  },
+  {
+    idAgente: 5,
+    nombreAgente: "ObsBot-X",
+    tipoAgente: "Observador",
+    estadoAgente: "Activo",
+    emailAdmin: "alice@mail.com",
+    fechaHora: ISODate("2026-06-20T09:00:00Z"),
+    tipoEvento: "interaccion",
+    criticidad: "Baja",
+    detalle: {
+      tipoInteraccion: "interaccion con usuario",
+      idUsuario: "alice@mail.com",
+      accion: "consulta de contenido"
+    }
+  },
+  {
+    idAgente: 5,
+    nombreAgente: "ObsBot-X",
+    tipoAgente: "Observador",
+    estadoAgente: "Activo",
+    emailAdmin: "alice@mail.com",
+    fechaHora: ISODate("2026-06-20T09:30:00Z"),
+    tipoEvento: "interaccion",
+    criticidad: "Baja",
+    detalle: {
+      tipoInteraccion: "interaccion con usuario",
+      idUsuario: "bob@mail.com",
+      accion: "revision de publicacion"
+    }
+  },
+  {
+    idAgente: 5,
+    nombreAgente: "ObsBot-X",
+    tipoAgente: "Observador",
+    estadoAgente: "Activo",
+    emailAdmin: "alice@mail.com",
+    fechaHora: ISODate("2026-06-20T11:00:00Z"),
+    tipoEvento: "interaccion",
+    criticidad: "Baja",
+    detalle: {
+      tipoInteraccion: "interaccion con usuario",
+      idUsuario: "carol@mail.com",
+      accion: "solicitud de moderacion"
+    }
+  },
+  {
+    idAgente: 5,
+    nombreAgente: "ObsBot-X",
+    tipoAgente: "Observador",
+    estadoAgente: "Activo",
+    emailAdmin: "alice@mail.com",
+    fechaHora: ISODate("2026-06-20T14:00:00Z"),
+    tipoEvento: "interaccion",
+    criticidad: "Baja",
+    detalle: {
+      tipoInteraccion: "interaccion con usuario",
+      idUsuario: "alice@mail.com",
+      accion: "consulta de tendencias"
+    }
+  }
 
 ])
 
