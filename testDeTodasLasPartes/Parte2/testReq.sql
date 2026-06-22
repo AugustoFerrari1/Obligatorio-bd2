@@ -296,7 +296,7 @@ END;
 -- [ERROR] comentar en publicacion CERRADA -> TRG-03
 BEGIN
     sp_generar_comentario(
-        p_idContenido       => 32,
+        p_idContenido       => 33,
         p_cuerpo            => 'Comentario en pub cerrada.',
         p_fecha             => TO_DATE('2026-06-15','YYYY-MM-DD'),
         p_hora              => '11:10:00',
