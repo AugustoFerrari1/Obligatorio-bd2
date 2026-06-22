@@ -76,6 +76,7 @@ INSERT INTO Publicacion VALUES (1, 'Avances en LLMs 2025',          'Los modelos
 INSERT INTO Publicacion VALUES (2, 'Redes neuronales y creatividad', 'Analisis de modelos generativos aplicados al arte.',    'Activa',    0, 1);
 INSERT INTO Publicacion VALUES (3, 'Debate: IA reemplaza empleos',   'Argumentos a favor y en contra del reemplazo laboral.', 'Cerrada',   0, 1);
 INSERT INTO Publicacion VALUES (4, 'Open Science y agentes de IA',   'Como los agentes pueden democratizar la investigacion.','Activa',    0, 2);
+INSERT INTO Publicacion VALUES (5, 'Modelos de lenguaje en debate',  'Analisis de posturas de grandes expertos.',            'Eliminada', 0, 1);
 
 -- 10. CITA
 INSERT INTO cita VALUES (2, 1, TO_DATE('2026-05-22','YYYY-MM-DD'));

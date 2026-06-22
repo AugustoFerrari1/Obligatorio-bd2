@@ -65,7 +65,7 @@ BEGIN
     );
 END;
 /
--- Transferencia registrada. Nuevo admin del agente 1: bob@mail.com
+-- Error: el emailCedente no es el administrador actual del agente.
 
 SELECT idAgente, nombre, emailAdmin FROM Agente WHERE idAgente = 1;
 -- IDAGENTE  NOMBRE        EMAILADMIN
@@ -129,7 +129,7 @@ BEGIN
     );
 END;
 /
--- ORA-20001: TRG-01: El agente no esta activo o no es de tipo Generador.
+-- ORA-20001: Un agente suspendido no puede generar contenido.
 
 -- [ERROR] agente 5 es Observador -> TRG-01
 BEGIN
@@ -144,7 +144,7 @@ BEGIN
     );
 END;
 /
--- ORA-20001: TRG-01: El agente no esta activo o no es de tipo Generador.
+-- ORA-20002: Solo agentes de tipo Generador pueden crear publicaciones o comentarios.
 
 -- [ERROR] comunidad 3 ARCHIVADA -> TRG-02
 BEGIN
@@ -159,7 +159,7 @@ BEGIN
     );
 END;
 /
--- ORA-20002: TRG-02: La comunidad esta archivada o el agente no es Miembro Activo.
+-- ORA-20003: No se permiten nuevas publicaciones en comunidades archivadas.
 
 -- [ERROR] agente 1 NO es Miembro Activo de comunidad 4 -> TRG-02
 BEGIN
@@ -174,7 +174,7 @@ BEGIN
     );
 END;
 /
--- ORA-20002: TRG-02: La comunidad esta archivada o el agente no es Miembro Activo.
+-- ORA-20004: El agente debe ser Miembro Activo de la comunidad para publicar.
 
 SELECT idContenido, titulo, estado FROM Publicacion WHERE idContenido = 40;
 -- IDCONTENIDO  TITULO                        ESTADO
@@ -228,7 +228,7 @@ BEGIN
     );
 END;
 /
--- ORA-20004: TRG-04: Solo agentes Observadores activos pueden votar publicaciones activas.
+-- ORA-20008: Solo los agentes de tipo Observador estan facultados para votar.
 
 -- [ERROR] votar publicacion Eliminada -> TRG-04
 UPDATE Publicacion SET estado = 'Eliminada' WHERE idContenido = 2;
@@ -242,7 +242,7 @@ BEGIN
     );
 END;
 /
--- ORA-20004: TRG-04: Solo agentes Observadores activos pueden votar publicaciones activas.
+-- ORA-20009: No se puede votar una publicacion en estado Eliminada.
 UPDATE Publicacion SET estado = 'Activa' WHERE idContenido = 2;
 
 -- [ERROR] agente 4 SUSPENDIDO intenta votar -> TRG-04
@@ -256,7 +256,7 @@ BEGIN
     );
 END;
 /
--- ORA-20004: TRG-04: Solo agentes Observadores activos pueden votar publicaciones activas.
+-- ORA-20007: Un agente suspendido no puede emitir votos.
 
 
 -- ============================================================
@@ -306,7 +306,7 @@ BEGIN
     );
 END;
 /
--- ORA-20003: TRG-03: La publicacion esta cerrada o el agente no es Miembro Activo de la comunidad.
+-- ORA-20005: No se admiten nuevos comentarios en una publicacion Cerrada.
 
 -- [ERROR] agente 5 (Observador) intenta comentar -> TRG-01
 BEGIN
@@ -321,7 +321,7 @@ BEGIN
     );
 END;
 /
--- ORA-20001: TRG-01: El agente no esta activo o no es de tipo Generador.
+-- ORA-20002: Solo agentes de tipo Generador pueden crear publicaciones o comentarios.
 
 -- [ERROR] agente 2 comenta pub 4 pero no es miembro de com 2 -> TRG-03
 BEGIN
@@ -336,7 +336,7 @@ BEGIN
     );
 END;
 /
--- ORA-20003: TRG-03: La publicacion esta cerrada o el agente no es Miembro Activo de la comunidad.
+-- ORA-20006: Un agente no puede comentar en una comunidad a la que no pertenece.
 
 
 -- ============================================================
@@ -389,7 +389,7 @@ BEGIN
     );
 END;
 /
--- ORA-20006: TRG-06: Solo Moderadores activos y miembros de la comunidad pueden moderar.
+-- ORA-20011: Solo los agentes de tipo Moderador pueden moderar contenido.
 
 -- [ERROR] agente 4 SUSPENDIDO -> TRG-06
 BEGIN
@@ -403,7 +403,7 @@ BEGIN
     );
 END;
 /
--- ORA-20006: TRG-06: Solo Moderadores activos y miembros de la comunidad pueden moderar.
+-- ORA-20010: Un agente suspendido no puede realizar tareas de moderacion.
 
 -- [ERROR] agente 3 modera en comunidad 4 donde no pertenece -> TRG-06
 BEGIN
@@ -417,7 +417,7 @@ BEGIN
     );
 END;
 /
--- ORA-20006: TRG-06: Solo Moderadores activos y miembros de la comunidad pueden moderar.
+-- ORA-20012: El agente moderador no pertenece a esta comunidad.
 
 
 -- ============================================================
@@ -499,7 +499,7 @@ END;
 -- === RANKING - Comunidad: 1 ===
 -- Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
 -- -----------------------------------------------------------------------
--- (filas con las publicaciones activas de los ultimos 30 dias ordenadas por votos)
+-- No se encontraron publicaciones activas en los ultimos 30 dias.
 
 -- [OK] Ranking comunidad 1 filtrado por emailAdmin
 BEGIN
@@ -512,7 +512,7 @@ END;
 -- === RANKING - Comunidad: 1 ===
 -- Puesto | Votos | Titulo                | Fecha      | Agente          | Admin
 -- -----------------------------------------------------------------------
--- (filas filtradas por alice@mail.com)
+-- No se encontraron publicaciones activas en los ultimos 30 dias.
 
 -- [OK] comunidad 4 sin publicaciones activas
 BEGIN

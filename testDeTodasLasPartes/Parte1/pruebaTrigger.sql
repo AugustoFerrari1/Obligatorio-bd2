@@ -75,7 +75,7 @@ INSERT INTO vota VALUES (1, 23, 1, TO_DATE('2026-06-04','YYYY-MM-DD'), '09:30:00
 
 -- [ERR-20009] Publicacion 5: estado='Eliminada'
 INSERT INTO vota VALUES (5, 5, 1, TO_DATE('2026-06-04','YYYY-MM-DD'), '10:00:00');
--- ORA-01403: no data found
+-- ORA-20009: No se puede votar una publicacion en estado Eliminada.
 
 
 -- ============================================================
